@@ -9,6 +9,7 @@ import (
 	"github.com/xbanchon/image-processing-service/internal/auth"
 	"github.com/xbanchon/image-processing-service/internal/db"
 	"github.com/xbanchon/image-processing-service/internal/env"
+	"github.com/xbanchon/image-processing-service/internal/ratelimiter"
 	"github.com/xbanchon/image-processing-service/internal/store"
 	"github.com/xbanchon/image-processing-service/internal/store/cache"
 	"github.com/xbanchon/image-processing-service/internal/store/supabase"
@@ -40,6 +41,11 @@ func main() {
 			pw:      env.GetString("REDIS_PW", ""),
 			db:      env.GetInt("REDIS_DB", 0),
 			enabled: env.GetBool("REDIS_ENABLED", false),
+		},
+		ratelimiter: ratelimiter.Config{
+			RequestPerTimeFrame: env.GetInt("RL_REQS_COUNT", 15),
+			TimeFrame:           5 * time.Second,
+			Enabled:             env.GetBool("RL_ENABLED", true),
 		},
 	}
 
@@ -87,6 +93,12 @@ func main() {
 	sc := supabase.NewSupabaseClient(cfg.bucketCfg.bucket_id, cfg.bucketCfg.api_key)
 	bucket := supabase.NewSupabaseStorage(sc)
 
+	//Rate Limiter
+	rateLimiter := ratelimiter.NewFixedWindowLimiter(
+		cfg.ratelimiter.RequestPerTimeFrame,
+		cfg.ratelimiter.TimeFrame,
+	)
+
 	app := &application{
 		config:        cfg,
 		authenticator: jwtAuthenticator,
@@ -94,6 +106,7 @@ func main() {
 		store:         store,
 		bucket:        bucket,
 		cacheStorage:  cacheStore,
+		rateLimiter:   rateLimiter,
 	}
 
 	// Metrics
