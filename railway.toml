@@ -3,10 +3,9 @@ builder = "NIXPACKS"
 buildCommand = "export CGO_ENABLED=1 && go build -C cmd/app -o out"
 
 [build.phases.setup]
-nixPkgs = ["...", "libgcc"]
-aptPkgs = ["...", "libvips", "libvips-dev"]
+nixPkgs = ["...", "libgcc", "vips"]
 
 [build.phases.install]
 dependsOn = ["setup"]
-cmds = ["go mod download"]
+cmds = ["go mod download", "whereis gcc"]
 
