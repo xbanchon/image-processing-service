@@ -7,5 +7,5 @@ nixPkgs = ["...", "libgcc", "vips"]
 
 [build.phases.install]
 dependsOn = ["setup"]
-cmds = ["go mod download", "whereis gcc"]
+cmds = ["whereis gcc"]
 
