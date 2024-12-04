@@ -3,7 +3,7 @@ builder = "NIXPACKS"
 buildCommand = "export CGO_ENABLED=1 && go build -C cmd/app -o out"
 
 [build.phases.setup]
-aptPkgs = ["libvips", "libvips-dev"]
+aptPkgs = ["libvips", "libvips-dev", "build-essential"]
 
 [build.phases.install]
 dependsOn = ["setup"]
