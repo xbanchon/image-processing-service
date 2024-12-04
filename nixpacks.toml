@@ -1,13 +1,13 @@
-providers = ["...","go"]
+providers = ["go"]
 
 [phases.setup]
-aptPkgs = ["...", "libvips", "libvips-dev"]
+aptPkgs = ["libvips", "libvips-dev"]
 
 [phases.install]
-cmd = "go mod download"
+cmds = ["go mod download"]
 
 [phases.build]
-cmd = "go build -C cmd/app -o out"
+cmds = ["go build -C cmd/app -o out"]
 
 [phases.start]
 cmd = "./out"

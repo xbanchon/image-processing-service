@@ -1,0 +1,12 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "go build -C cmd/app -o out"
+nixpacksPlan = "go"
+
+[build.nixpacksPlan.phases.setup]
+aptPkgs = ["libvips", "libvips-dev"]
+
+[build.nixpacksPlan.phases.install]
+dependsOn = ["setup"]
+cmds = ["go mod download"]
+
